@@ -1,0 +1,34 @@
+{
+    "additionalProperties": true,
+    "description": "Extends the HotelRoom class to include Fiware-specific properties.",
+    "properties": {
+        "id": {
+            "description": "Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &, ?, / and #.",
+            "example": "Bcn-Welt",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Entity Id",
+            "type": "string"
+        },
+        "type": {
+            "default": "HotelRoom",
+            "title": "Type",
+            "type": "string"
+        },
+        "name": {
+            "default": null,
+            "title": "Name",
+            "type": "string"
+        },
+        "hasLocation": {
+            "default": null,
+            "title": "Haslocation",
+            "type": "string"
+        }
+    },
+    "required": [
+        "id"
+    ],
+    "title": "HotelRoomFiware",
+    "type": "object"
+}
