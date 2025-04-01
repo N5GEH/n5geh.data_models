@@ -10,37 +10,37 @@ jobs:
   set-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Find API spec files and build matrix
-        id: set-matrix
+        id: build-matrix
         run: |
           # Find all YAML files under any "api_docs" directory
           specs=$(find . -type f -path "*/api_docs/*.yaml")
           echo "Found spec files:"
           echo "$specs"
 
-          # Build a JSON array of matrix entries.
-          # Each entry holds the relative path to the spec file
-          # and a computed output folder (using the base name without extension).
+          # Build a JSON matrix where for each spec the output folder is set relative to the spec's directory.
           matrix="[]"
           for spec in $specs; do
             base=$(basename "$spec" .yaml)
-            newEntry="{\"spec\":\"${spec}\", \"output\":\"swagger-ui/${base}\"}"
+            spec_dir=$(dirname "$spec")
+            # Output folder will be placed inside each api_docs folder:
+            output_dir="${spec_dir}/swagger-ui/${base}"
+            newEntry="{\"spec\":\"${spec}\", \"output\":\"${output_dir}\"}"
             if [ "$matrix" = "[]" ]; then
               matrix="[$newEntry]"
             else
-              # Remove the trailing ] and append a comma+newEntry then closing ]
               matrix="${matrix%]}"
               matrix+=",${newEntry}]"
             fi
           done
 
           echo "Matrix JSON: $matrix"
-          echo "::set-output name=matrix::$matrix"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   update-docs:
     needs: set-matrix
@@ -53,6 +53,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Create output folder if not present
+        run: mkdir -p "${{ matrix.output }}"
 
       - name: Generate Swagger UI for ${{ matrix.spec }}
         uses: Legion2/swagger-ui-action@v1
