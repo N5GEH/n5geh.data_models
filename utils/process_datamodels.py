@@ -120,6 +120,7 @@ def main():
     folders = [item for item in items if
                os.path.isdir(item) and item != "utils" and not item.startswith(".")]
     changed_files = get_changed_files()
+    print(f"Geänderte Dateien: {changed_files}")
     processed_any = False
 
     for folder in folders:
@@ -132,7 +133,7 @@ def main():
         else:
             print(f"Kein data_models.py in Ordner '{folder}' gefunden – überspringe.")
 
-    # Schritt 8: Falls Änderungen vorgenommen wurden, commiten und in den development Branch pushen
+    # Schritt 8: Falls Änderungen vorgenommen wurden, committen und in den aktuellen Branch pushen
     if processed_any:
         try:
             subprocess.check_call(["git", "config", "user.name", "github-actions"])
@@ -142,8 +143,15 @@ def main():
             # Commit: Falls keine Änderungen vorhanden sind, wird commit fehlschlagen – dies ignorieren
             subprocess.call(["git", "commit", "-m",
                              "Update generated schemas and OpenAPI docs [skip ci]"])
-            subprocess.check_call(["git", "push", "origin", "development"])
-            print("Änderungen wurden in den development Branch gepusht.")
+
+            # Ermittle den aktuellen Branch aus der Umgebungsvariable GITHUB_REF
+            branch_ref = os.environ.get("GITHUB_REF", "")
+            branch = "development"  # Fallback, falls GITHUB_REF nicht gesetzt ist
+            if branch_ref.startswith("refs/heads/"):
+                branch = branch_ref[len("refs/heads/"):]
+
+            subprocess.check_call(["git", "push", "origin", branch])
+            print(f"Änderungen wurden in den Branch '{branch}' gepusht.")
         except Exception as e:
             print(f"Fehler beim Commit/Pushe der Änderungen: {e}", file=sys.stderr)
     else:

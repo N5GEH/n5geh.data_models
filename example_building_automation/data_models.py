@@ -1,3 +1,7 @@
+"""
+Example data models for building automation.
+"""
+
 from typing import Optional
 from filip.models.ngsi_v2.context import ContextEntityKeyValues
 from pydantic import BaseModel
