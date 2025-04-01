@@ -3,28 +3,62 @@ import os
 import subprocess
 import shutil
 import sys
+import json
 
 
 def get_changed_files():
     """
-    Ermittelt anhand von GITHUB_SHA die im Commit geänderten Dateien.
-    Falls GITHUB_SHA nicht gesetzt ist, wird None zurückgegeben.
+    Ermittelt die im Push-Event geänderten Dateien.
+    Verwendet zunächst den GitHub Event-Payload (GITHUB_EVENT_PATH) zum Vergleich
+    von before und after. Falls dies fehlschlägt, wird ein Fallback auf GITHUB_SHA verwendet.
     """
+    # Versuche, die Datei mit dem GitHub-Event-Payload zu laden.
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if event_path and os.path.exists(event_path):
+        try:
+            with open(event_path, "r") as f:
+                event_data = json.load(f)
+            before = event_data.get("before")
+            after = event_data.get("after")
+            if before and after:
+                # Ermittle die Liste der geänderten Dateien zwischen before und after.
+                result = subprocess.check_output(
+                    ["git", "diff", "--name-only", before, after],
+                    universal_newlines=True
+                )
+                changed_files = set(result.splitlines())
+                if changed_files:
+                    print(
+                        f"Ermittelte geänderte Dateien aus dem Event-Payload: {changed_files}")
+                    return changed_files
+                else:
+                    print("Kein Unterschied zwischen 'before' und 'after' gefunden.",
+                          file=sys.stderr)
+            else:
+                print(
+                    "Das Event-Payload enthält nicht die Felder 'before' und/oder 'after'.",
+                    file=sys.stderr)
+        except Exception as e:
+            print(f"Fehler beim Laden oder Verarbeiten von {event_path}: {e}",
+                  file=sys.stderr)
+
+    # Fallback: Verwende GITHUB_SHA, falls der Event-Payload nicht verfügbar oder unvollständig ist.
     sha = os.environ.get("GITHUB_SHA")
     if not sha:
         print("Keine GITHUB_SHA gefunden – es werden alle data_models.py verarbeitet.",
               file=sys.stderr)
         return None
     try:
-        # Ermittelt alle geänderten Dateien des Commits
         result = subprocess.check_output(
             ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", sha],
             universal_newlines=True
         )
         changed_files = set(result.splitlines())
+        print(f"Ermittelte geänderte Dateien über GITHUB_SHA: {changed_files}")
         return changed_files
     except Exception as e:
-        print(f"Fehler beim Ermitteln der geänderten Dateien: {e}", file=sys.stderr)
+        print(f"Fehler beim Ermitteln der geänderten Dateien mittels GITHUB_SHA: {e}",
+              file=sys.stderr)
         return None
 
 
