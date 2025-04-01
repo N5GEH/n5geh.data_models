@@ -1,0 +1,36 @@
+{
+    "additionalProperties": true,
+    "description": "Base class for Fiware-compatible sensors.",
+    "properties": {
+        "id": {
+            "description": "Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &, ?, / and #.",
+            "example": "Bcn-Welt",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Entity Id",
+            "type": "string"
+        },
+        "type": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "enum": [],
+                    "title": "Enum"
+                }
+            ],
+            "description": "Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &, ?, / and #.",
+            "example": "Room",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Entity Type"
+        }
+    },
+    "required": [
+        "id",
+        "type"
+    ],
+    "title": "SensorFiware",
+    "type": "object"
+}
