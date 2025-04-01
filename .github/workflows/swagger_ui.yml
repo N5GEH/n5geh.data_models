@@ -10,7 +10,8 @@ jobs:
   set-matrix:
     runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: gh-pages-deployment
+      cancel-in-progress: false
     outputs:
       matrix: ${{ steps.build-matrix.outputs.matrix }}
     steps:
