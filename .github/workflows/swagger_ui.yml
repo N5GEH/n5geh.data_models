@@ -48,7 +48,8 @@ jobs:
     strategy:
       # Use the dynamically generated matrix.
       # Each job will process one API spec file.
-      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+      matrix:
+        include: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
