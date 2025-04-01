@@ -23,12 +23,14 @@ jobs:
           echo "Found spec files:"
           echo "$specs"
 
-          # Build a JSON matrix where for each spec the output folder is set relative to the spec's directory.
+          # Build a JSON matrix: for each spec, the output directory is under the same api_docs folder.
           matrix="[]"
           for spec in $specs; do
+            # Remove the .yaml extension from the file name
             base=$(basename "$spec" .yaml)
+            # Get the directory of the spec file
             spec_dir=$(dirname "$spec")
-            # Output folder will be placed inside each api_docs folder:
+            # For each spec, the generated output will reside in: <spec_dir>/swagger-ui/<basename>
             output_dir="${spec_dir}/swagger-ui/${base}"
             newEntry="{\"spec\":\"${spec}\", \"output\":\"${output_dir}\"}"
             if [ "$matrix" = "[]" ]; then
@@ -40,6 +42,7 @@ jobs:
           done
 
           echo "Matrix JSON: $matrix"
+          # Set the matrix output (using the new recommended GITHUB_OUTPUT mechanism)
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   update-docs:
@@ -65,3 +68,32 @@ jobs:
           # The output directory, computed in the matrix (e.g. swagger-ui/ActuatorFiware)
           output: ${{ matrix.output }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit generated Swagger UI files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Stage only changes in the api_docs folders
+          git add **/api_docs/swagger-ui
+          # Commit if there are changes
+          git commit -m "Update generated Swagger UI for ${{ matrix.spec }}" || echo "No changes to commit"
+          git push
+
+  deploy-pages:
+    needs: update-docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          # Ensure the latest commits are checked out
+          fetch-depth: 0
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Change the publish_dir to the folder you want served.
+          # For example, here we deploy everything under "example_building_automation/api_docs"
+          # which includes the generated swagger-ui subfolders.
+          publish_dir: example_building_automation/api_docs
