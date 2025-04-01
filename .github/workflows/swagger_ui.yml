@@ -1,0 +1,63 @@
+name: Update Generated Schemas and OpenAPI Docs
+
+on:
+  push:
+    # Adjust branches as needed
+    branches:
+      - '**'
+
+jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Find API spec files and build matrix
+        id: set-matrix
+        run: |
+          # Find all YAML files under any "api_docs" directory
+          specs=$(find . -type f -path "*/api_docs/*.yaml")
+          echo "Found spec files:"
+          echo "$specs"
+
+          # Build a JSON array of matrix entries.
+          # Each entry holds the relative path to the spec file
+          # and a computed output folder (using the base name without extension).
+          matrix="[]"
+          for spec in $specs; do
+            base=$(basename "$spec" .yaml)
+            newEntry="{\"spec\":\"${spec}\", \"output\":\"swagger-ui/${base}\"}"
+            if [ "$matrix" = "[]" ]; then
+              matrix="[$newEntry]"
+            else
+              # Remove the trailing ] and append a comma+newEntry then closing ]
+              matrix="${matrix%]}"
+              matrix+=",${newEntry}]"
+            fi
+          done
+
+          echo "Matrix JSON: $matrix"
+          echo "::set-output name=matrix::$matrix"
+
+  update-docs:
+    needs: set-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      # Use the dynamically generated matrix.
+      # Each job will process one API spec file.
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Generate Swagger UI for ${{ matrix.spec }}
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          # The file to process from the matrix.
+          spec-file: ${{ matrix.spec }}
+          # The output directory, computed in the matrix (e.g. swagger-ui/ActuatorFiware)
+          output: ${{ matrix.output }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
