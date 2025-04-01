@@ -1,4 +1,4 @@
-name: Generate Swagger UI for API specs of the data models
+name: Generate Swagger UI for API specs of data models
 
 on:
   push:
@@ -67,7 +67,7 @@ jobs:
           spec-file: ${{ matrix.spec }}
           # The output directory, computed in the matrix (e.g. swagger-ui/ActuatorFiware)
           output: ${{ matrix.output }}
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
