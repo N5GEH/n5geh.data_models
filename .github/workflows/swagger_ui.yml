@@ -1,4 +1,4 @@
-name: Update Generated Schemas and OpenAPI Docs
+name: Generate Swagger UI for API specs of the data models
 
 on:
   push:
