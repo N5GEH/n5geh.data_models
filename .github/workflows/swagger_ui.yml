@@ -77,6 +77,7 @@ jobs:
           # For example, here we deploy everything under "example_building_automation/api_docs"
           # which includes the generated swagger-ui subfolders.
           publish_dir: ${{ matrix.output }}
+          destination_dir: ${{ matrix.output }}
 
 #      - name: Commit generated Swagger UI files
 #        run: |
