@@ -74,16 +74,16 @@ def process_folder(folder, changed_files):
         return False  # kein data_models.py -> Ordner wird übersprungen
 
     # Prüfe, ob data_models.py in diesem Commit geändert wurde:
-    if changed_files is not None:
-        rel_path = os.path.relpath(data_models_path)
-        if rel_path not in changed_files:
-            print(
-                f"{data_models_path} wurde in diesem Commit nicht geändert. Überspringe {folder}.")
-            return False
-        else:
-            print(f"{data_models_path} wurde geändert – bearbeite {folder}.")
-    else:
-        print(f"Bearbeite {data_models_path}, da keine Änderungsinfo vorliegt.")
+    # if changed_files is not None:
+    #     rel_path = os.path.relpath(data_models_path)
+    #     if rel_path not in changed_files:
+    #         print(
+    #             f"{data_models_path} wurde in diesem Commit nicht geändert. Überspringe {folder}.")
+    #         return False
+    #     else:
+    #         print(f"{data_models_path} wurde geändert – bearbeite {folder}.")
+    # else:
+    #     print(f"Bearbeite {data_models_path}, da keine Änderungsinfo vorliegt.")
 
     # Schritt 3: serializer.py kopieren und ausführen
     serializer_src = os.path.join("utils", "serializer.py")
