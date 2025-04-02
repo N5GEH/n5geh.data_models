@@ -1,0 +1,127 @@
+openapi: 3.0.1
+info:
+  title: TemperatureSensorFiware
+  description: API specification for IoT platform including Temperature Sensor Fiwares
+  version: '1.0'
+servers:
+- url: http://fiware.rwth-aachen.de/
+paths:
+  /v2/entities:
+    get:
+      tags:
+      - Temperature Sensor Fiware
+      summary: Get Temperature Sensor Fiwares
+      description: Retrieves available temperature sensor fiwares
+      operationId: getTemperatureSensorFiwares
+      parameters:
+      - name: type
+        in: query
+        description: Entity type, to avoid ambiguity in case there are several entities
+          with the same entity id.
+        schema:
+          type: string
+          default: TemperatureSensorFiware
+      - name: Fiware-Service
+        in: header
+        required: true
+        schema:
+          type: string
+          default: semantic_iot
+      - name: Fiware-ServicePath
+        in: header
+        required: true
+        schema:
+          type: string
+          default: /
+      responses:
+        '200':
+          description: Successful operation. Returns the temperature measurement.
+          content:
+            text/plain:
+              schema:
+                type: number
+                format: float
+              example: 22.5
+        '404':
+          description: Temperature Sensor Fiware not found.
+          content: {}
+        '500':
+          description: Internal server error.
+          content: {}
+    post:
+      tags:
+      - Temperature Sensor Fiware
+      summary: Create Temperature Sensor Fiware
+      description: Creates a new Temperature Sensor Fiware entity in the system.
+      operationId: createTemperatureSensorFiware
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemperatureSensorFiware'
+            example:
+              id: temperaturesensorfiware001
+              type: TemperatureSensorFiware
+              temperature:
+                value: 22.5
+      parameters:
+      - name: Fiware-Service
+        in: header
+        required: true
+        schema:
+          type: string
+          default: semantic_iot
+      - name: Fiware-ServicePath
+        in: header
+        required: true
+        schema:
+          type: string
+          default: /
+      responses:
+        '201':
+          description: Temperature Sensor Fiware successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemperatureSensorFiware'
+        '400':
+          description: Invalid input data.
+          content: {}
+        '500':
+          description: Internal server error.
+          content: {}
+components:
+  schemas:
+    TemperatureSensorFiware:
+      additionalProperties: true
+      description: Extends the TemperatureSensor class to include Fiware-specific
+        properties.
+      properties:
+        id:
+          description: 'Id of an entity in an NGSI context broker. Allowed characters
+            are the ones in the plain ASCII set, except the following ones: control
+            characters, whitespace, &, ?, / and #.'
+          example: Bcn-Welt
+          maxLength: 256
+          minLength: 1
+          title: Entity Id
+          type: string
+        type:
+          default: TemperatureSensor
+          title: Type
+          type: string
+        hasLocation:
+          default: null
+          title: Haslocation
+          type: string
+        temperature:
+          anyOf:
+          - type: number
+          - type: 'null'
+          default: 0
+          title: Temperature
+      required:
+      - id
+      title: TemperatureSensorFiware
+      type: object
