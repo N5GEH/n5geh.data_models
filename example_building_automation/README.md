@@ -8,45 +8,45 @@ Besides, the interactive API documentation of each data model is also created an
 In this example, following data models are available:
 
 **Temperature Sensor**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/TemperatureSensorFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/TemperatureSensorFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/TemperatureSensorFiware/)
 
 **CO2 Sensor**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/CO2SensorFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/CO2SensorFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/CO2SensorFiware/)
 
 **Presence Sensor**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/PresenceSensorFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/PresenceSensorFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/PresenceSensorFiware/)
 
 **Cooling Coil**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/CoolingCoilFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/CoolingCoilFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/CoolingCoilFiware/)
 
 **Fresh Air Ventilation**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/FreshAirVentilationFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/FreshAirVentilationFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/FreshAirVentilationFiware/)
 
 **Radiator Thermostat**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/RadiatorThermostatFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/RadiatorThermostatFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/RadiatorThermostatFiware/)
 
 **Hotel**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/HotelFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/HotelFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/HotelFiware/)
 
 **Hotel Room**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/HotelRoomFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/HotelRoomFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/HotelRoomFiware/)
 
 **Sensor**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/SensorFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/SensorFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/SensorFiware/)
 
 **Actuator**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/ActuatorFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/ActuatorFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/ActuatorFiware/)
 
 **Temperature Sensor Ambient**
-- [Schema TODO](https://djs0109.github.io/data_models/example_building_automation/api_docs/swagger-ui/TemperatureSensorAmbFiware/)
+- [Schema](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/TemperatureSensorAmbFiware.json)
 - [Swagger document](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/TemperatureSensorAmbFiware/)
