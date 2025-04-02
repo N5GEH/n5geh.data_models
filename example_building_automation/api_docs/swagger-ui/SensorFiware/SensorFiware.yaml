@@ -1,0 +1,121 @@
+openapi: 3.0.1
+info:
+  title: SensorFiware
+  description: API specification for IoT platform including Sensor Fiwares
+  version: '1.0'
+servers:
+- url: http://fiware.rwth-aachen.de/
+paths:
+  /v2/entities:
+    get:
+      tags:
+      - Sensor Fiware
+      summary: Get Sensor Fiwares
+      description: Retrieves available sensor fiwares
+      operationId: getSensorFiwares
+      parameters:
+      - name: type
+        in: query
+        description: Entity type, to avoid ambiguity in case there are several entities
+          with the same entity id.
+        schema:
+          type: string
+          default: SensorFiware
+      - name: Fiware-Service
+        in: header
+        required: true
+        schema:
+          type: string
+          default: semantic_iot
+      - name: Fiware-ServicePath
+        in: header
+        required: true
+        schema:
+          type: string
+          default: /
+      responses:
+        '200':
+          description: Successful operation. Returns the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorFiware'
+        '404':
+          description: Sensor Fiware not found.
+          content: {}
+        '500':
+          description: Internal server error.
+          content: {}
+    post:
+      tags:
+      - Sensor Fiware
+      summary: Create Sensor Fiware
+      description: Creates a new Sensor Fiware entity in the system.
+      operationId: createSensorFiware
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorFiware'
+            example:
+              id: sensorfiware001
+              type: SensorFiware
+      parameters:
+      - name: Fiware-Service
+        in: header
+        required: true
+        schema:
+          type: string
+          default: semantic_iot
+      - name: Fiware-ServicePath
+        in: header
+        required: true
+        schema:
+          type: string
+          default: /
+      responses:
+        '201':
+          description: Sensor Fiware successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorFiware'
+        '400':
+          description: Invalid input data.
+          content: {}
+        '500':
+          description: Internal server error.
+          content: {}
+components:
+  schemas:
+    SensorFiware:
+      additionalProperties: true
+      description: Base class for Fiware-compatible sensors.
+      properties:
+        id:
+          description: 'Id of an entity in an NGSI context broker. Allowed characters
+            are the ones in the plain ASCII set, except the following ones: control
+            characters, whitespace, &, ?, / and #.'
+          example: Bcn-Welt
+          maxLength: 256
+          minLength: 1
+          title: Entity Id
+          type: string
+        type:
+          anyOf:
+          - type: string
+          - enum: []
+            title: Enum
+          description: 'Id of an entity in an NGSI context broker. Allowed characters
+            are the ones in the plain ASCII set, except the following ones: control
+            characters, whitespace, &, ?, / and #.'
+          example: Room
+          maxLength: 256
+          minLength: 1
+          title: Entity Type
+      required:
+      - id
+      - type
+      title: SensorFiware
+      type: object
