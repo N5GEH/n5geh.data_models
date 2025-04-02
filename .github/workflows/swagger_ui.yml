@@ -18,42 +18,80 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Find API spec files and build matrix
+      - name: Find API spec files and JSON schema files and build matrix
         id: build-matrix
         run: |
+          # Initialize two JSON arrays—one for Swagger API specs, one for JSON schemas
+          matrix_swagger="[]"
+          matrix_schema="[]"
+
+          ### Process Swagger API specs
           # Find all YAML files under any "api_docs" directory
           specs=$(find . -type f -path "*/api_docs/*.yaml")
-          echo "Found spec files:"
+          echo "Found API spec files:"
           echo "$specs"
 
-          # Build a JSON matrix: for each spec, the output directory is under the same api_docs folder.
-          matrix="[]"
           for spec in $specs; do
             # Remove the .yaml extension from the file name
             base=$(basename "$spec" .yaml)
             # Get the directory of the spec file
             spec_dir=$(dirname "$spec")
-            # For each spec, the generated output will reside in: <spec_dir>/swagger-ui/<basename>
+            # The generated swagger ui will reside in: <spec_dir>/swagger-ui/<basename>
             output_dir="${spec_dir}/swagger-ui/${base}"
-            newEntry="{\"spec\":\"${spec}\", \"output\":\"${output_dir}\"}"
-            if [ "$matrix" = "[]" ]; then
-              matrix="[$newEntry]"
+            # Mark this entry as type "swagger"
+            entry="{\"type\": \"swagger\", \"spec\": \"${spec}\", \"output\": \"${output_dir}\"}"
+            if [ "$matrix_swagger" = "[]" ]; then
+              matrix_swagger="[$entry]"
             else
-              matrix="${matrix%]}"
-              matrix+=",${newEntry}]"
+              matrix_swagger="${matrix_swagger%]}"
+              matrix_swagger+=",${entry}]"
             fi
           done
 
-          echo "Matrix JSON: $matrix"
-          # Set the matrix output (using the new recommended GITHUB_OUTPUT mechanism)
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          ### Process JSON Schema files
+          # Find all JSON files under any "schemas" directory
+          schemas=$(find . -type f -path "*/schemas/*.json")
+          echo "Found JSON schema files:"
+          echo "$schemas"
+
+          for schema in $schemas; do
+            # Remove the .json extension from the file name for folder naming (optional)
+            base=$(basename "$schema" .json)
+            # Get the directory of the schema file
+            schema_dir=$(dirname "$schema")
+            # Define an output folder for the schema; here we place it under a "json-schemas" folder.
+            output_dir="${schema_dir}/json-schemas/${base}"
+            # Mark this entry as type "schema"
+            entry="{\"type\": \"schema\", \"schema\": \"${schema}\", \"output\": \"${output_dir}\"}"
+            if [ "$matrix_schema" = "[]" ]; then
+              matrix_schema="[$entry]"
+            else
+              matrix_schema="${matrix_schema%]}"
+              matrix_schema+=",${entry}]"
+            fi
+          done
+
+          ### Combine both matrices
+          if [ "$matrix_swagger" = "[]" ]; then
+            combined_matrix="$matrix_schema"
+          elif [ "$matrix_schema" = "[]" ]; then
+            combined_matrix="$matrix_swagger"
+          else
+            # Remove the ending ] from the swagger array and the starting [ from the schema list, then combine.
+            combined_matrix="${matrix_swagger%]}"
+            matrix_schema_content=${matrix_schema#\[}
+            combined_matrix+=",${matrix_schema_content}"
+          fi
+
+          echo "Combined Matrix JSON: $combined_matrix"
+          # Set output using GITHUB_OUTPUT environment variable
+          echo "matrix=$combined_matrix" >> $GITHUB_OUTPUT
 
   update-docs:
     needs: set-matrix
     runs-on: ubuntu-latest
     strategy:
-      # Use the dynamically generated matrix.
-      # Each job will process one API spec file.
+      # Use all entries (both swagger and schema) from the combined matrix.
       matrix:
         include: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
@@ -63,50 +101,34 @@ jobs:
       - name: Create output folder if not present
         run: mkdir -p "${{ matrix.output }}"
 
+      # --- Process Swagger API Specs ---
       - name: Generate Swagger UI for ${{ matrix.spec }}
+        if: ${{ matrix.type == 'swagger' }}
         uses: Legion2/swagger-ui-action@v1
         with:
-          # The file to process from the matrix.
           spec-file: ${{ matrix.spec }}
-          # The output directory, computed in the matrix (e.g. swagger-ui/ActuatorFiware)
           output: ${{ matrix.output }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (Swagger UI)
+        if: ${{ matrix.type == 'swagger' }}
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Change the publish_dir to the folder you want served.
-          # For example, here we deploy everything under "example_building_automation/api_docs"
-          # which includes the generated swagger-ui subfolders.
           publish_dir: ${{ matrix.output }}
           destination_dir: ${{ matrix.output }}
 
-#      - name: Commit generated Swagger UI files
-#        run: |
-#          git config --global user.name "github-actions[bot]"
-#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-#          # Stage only changes in the api_docs folders
-#          git add **/api_docs/swagger-ui
-#          # Commit if there are changes
-#          git commit -m "Update generated Swagger UI for ${{ matrix.spec }}" || echo "No changes to commit"
-#          git push
+      # --- Process JSON Schema Files ---
+      - name: Copy JSON Schema to output folder
+        if: ${{ matrix.type == 'schema' }}
+        run: |
+          mkdir -p "${{ matrix.output }}"
+          cp "${{ matrix.schema }}" "${{ matrix.output }}/"
 
-#  deploy-pages:
-#    needs: update-docs
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v2
-#        with:
-#          # Ensure the latest commits are checked out
-#          fetch-depth: 0
-#
-#      - name: Deploy to GitHub Pages
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          # Change the publish_dir to the folder you want served.
-#          # For example, here we deploy everything under "example_building_automation/api_docs"
-#          # which includes the generated swagger-ui subfolders.
-#          publish_dir: example_building_automation/api_docs
+      - name: Deploy JSON Schema to GitHub Pages
+        if: ${{ matrix.type == 'schema' }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ matrix.output }}
+          destination_dir: ${{ matrix.output }}
