@@ -28,12 +28,12 @@ To use these utilities, the provided data models must follow some specific conve
   Processes each generated JSON Schema and converts it into an OpenAPI document (in YAML format), integrating the schema as a component.
   
 - **Standardized API Endpoints:**  
-  Automatically defines two common endpoints for each model:
+  Automatically defines two common FIWARE NGSI-v2 endpoints for each data model:
   - **GET** (to retrieve entities): Incorporates query parameters (like entity type and Fiware-specific info).
   - **POST** (to create new entities): Defines a request body that references the model's JSON Schema.
   
 - **Output:**  
-  Produces an OpenAPI YAML file (e.g., `TemperatureSensor_openapi.yaml`) for every JSON Schema, providing a ready-to-go API specification that matches the current model.
+  Produces an OpenAPI YAML file (e.g., `TemperatureSensor_openapi.yaml`) for every JSON Schema.
 
 ### GitHub Pages deployment
 - **JSON Schema hosting:**  
