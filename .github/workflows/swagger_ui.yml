@@ -4,7 +4,7 @@ on:
   push:
     # Adjust branches as needed
     branches:
-      - '**'
+      - main
 
 jobs:
   set-matrix:
