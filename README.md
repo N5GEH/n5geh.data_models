@@ -1,18 +1,10 @@
-**preliminary version**
-
 # Data Models Automation Utilities 
 
-This repository contains a set of Python utility scripts designed to automatically keep JSON Schemas and OpenAPI documentation in sync with your data models. This automation is especially useful when data models change frequently, as it reduces manual work and the likelihood of inconsistencies.
+This repository contains a set of Python utility scripts designed to automatically keep **JSON Schemas** and **OpenAPI documentation** in sync with your **[pydantic](https://docs.pydantic.dev/latest/)** based data models for FIWARE-based IoT platform.
 
-## Overview
+This automation reduces manual work and the likelihood of inconsistencies, so that developers can focus on managing the data models, which  will be considered as the single source of truth.
 
-The utilities include two main scripts:
-
-- **`serializer.py`**  
-  Dynamically scans for data model classes (which extend from a common base) and serializes them as JSON Schemas. Every time a model is updated, this script can generate or update a corresponding JSON Schema file without hard-coding each model name.
-
-- **`openapi_generator.py`**  
-  Converts the generated JSON Schemas into full-featured OpenAPI documents. It creates standardized API definitions by injecting default GET and POST operations for the IoT platform based on the JSON Schema, ensuring that your API documentation always mirrors the current state of your data models.
+To use these utilities, the provided data models must follow some specific convention. For this, please refer to the [n5geh tutorials](https://github.com/N5GEH/n5geh.tutorials.data_model) or the [example data model](./example_building_automation/data_models.py) in this repository. 
 
 ## Main Functionality
 
@@ -28,7 +20,7 @@ The utilities include two main scripts:
   Writes each JSON Schema to a file (e.g., `TemperatureSensor.json`), making it easy to track changes over time or use these schemas in further processing.
 
 - **Workflow Integration:**  
-  Designed to be executed within a larger workflow (e.g., a GitHub Actions pipeline) so that when data models are updated, the JSON Schemas are regenerated automatically.
+  Designed to be executed within a larger workflow (e.g., a GitHub Actions pipeline) so that when data models are updated, the JSON Schemas are regenerated automatically. But manual usage is also possible.
 
 ### `openapi_generator.py`
 
@@ -43,20 +35,14 @@ The utilities include two main scripts:
 - **Output:**  
   Produces an OpenAPI YAML file (e.g., `TemperatureSensor_openapi.yaml`) for every JSON Schema, providing a ready-to-go API specification that matches the current model.
 
-## Integration into GitHub Actions
+### GitHub Pages deployment
+- **JSON Schema hosting:**  
+    The generated JSON Schemas are hosted on GitHub Pages, for example [TemperatureSensorFiware.json](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/TemperatureSensorFiware.json). This will make serialized data models accessible for everyone, accelerating the collaboration and enhancing the transparency of the project. 
 
-The repository also includes a GitHub Actions workflow that leverages these scripts:
-
-- **Detection of Changes:**  
-  The workflow scans repository folders (excluding `utils`) for a `data_models.py` file. If such a file is changed or added in a commit, it triggers the generation steps.
+- **Swagger UI generation:**  
+    The generated OpenAPI YAML files are further used to create Swagger UI documentation, which is visualization of the API documentation, for example [TemperatureSensorFiware](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/TemperatureSensorFiware/). This provides a user-friendly interface for developers and partners to explore the use of corresponding data models in FIWARE APIs.
   
-- **Automated Execution:**  
-  The workflow copies `serializer.py` and `openapi_generator.py` temporarily into the respective folders, runs them to update the JSON Schemas and OpenAPI docs, and then cleans up the copied scripts.
-  
-- **Commit & Push:**  
-  Finally, if any changes were made, the workflow automatically commits and pushes these updates back to the branch that triggered the workflow (using commit messages with `[skip ci]` to avoid endless loops).
-
-## Usage
+## Usage (preliminary version)
 
 - **Manually:**  
   Run `python serializer.py` in the folder containing your `data_models.py` to generate JSON Schemas, then run `python openapi_generator.py` to create or update the OpenAPI documents.
