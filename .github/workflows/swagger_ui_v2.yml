@@ -125,7 +125,6 @@ jobs:
       - name: Copy JSON data
         run: |
           mkdir -p "$OUTPUT_ROOT/schemas"
-#          cp -R data/*.json $OUTPUT_ROOT/
           cp -R $JSON_SCHEMA_PATH/*.json $OUTPUT_ROOT/schemas/
 
       - name: Deploy to GitHub Pages
