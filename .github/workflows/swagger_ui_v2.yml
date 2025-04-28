@@ -81,7 +81,7 @@ jobs:
         with:
           # Each artifact is named after the folder, ensuring uniqueness
           name: ${{ matrix.output }}
-          path: deploy/${{ matrix.output }}
+          path: ${{ matrix.output }}
 
       - name: Copy schemas folder if available
         run: |
@@ -119,17 +119,17 @@ jobs:
         with:
           # This downloads all artifacts (each will be placed in its own folder
           # under the "deploy" directory)
-          path: deploy
+          path: $OUTPUT_ROOT
 
       # (Optional) In case you want to include JSON data as well:
       - name: Copy JSON data
         run: |
-          mkdir -p deploy/data
-          cp -R data/*.json $OUTPUT_ROOT/swagger-ui
+          mkdir -p "$OUTPUT_ROOT/schemas"
+#          cp -R data/*.json $OUTPUT_ROOT/swagger-ui
           cp -R $JSON_SCHEMA_PATH/*.json $OUTPUT_ROOT/schemas/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
+          publish_dir: $OUTPUT_ROOT
