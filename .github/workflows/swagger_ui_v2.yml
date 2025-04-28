@@ -35,11 +35,12 @@ jobs:
           for spec in $specs; do
             # Remove the .yaml extension from the file name
             base=$(basename "$spec" .yaml)
+            echo "found base name: $base"
             # Get the directory of the spec file
             spec_dir=$(dirname "$spec")
             # For each spec, the generated output will reside in: <spec_dir>/swagger-ui/<basename>
             output_dir="${spec_dir}/swagger-ui/${base}"
-            newEntry="{\"spec\":\"${spec}\", \"output\":\"${output_dir}\"}"
+            newEntry="{\"spec\":\"${spec}\", \"output\":\"${output_dir}\", \"base\":\"${base}\"}"
             if [ "$matrix" = "[]" ]; then
               matrix="[$newEntry]"
             else
@@ -67,7 +68,7 @@ jobs:
       - name: Create output folder if not present
         run: mkdir -p "${{ matrix.output }}"
 
-      - name: Generate Swagger UI for ${{ matrix.spec }}
+      - name: Generate Swagger UI for ${{ matrix.base }}
         uses: Legion2/swagger-ui-action@v1
         with:
           # The file to process from the matrix.
@@ -76,11 +77,11 @@ jobs:
           output: ${{ matrix.output }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifact for ${{ matrix.folder }}
+      - name: Upload artifact for ${{ matrix.base }}
         uses: actions/upload-artifact@v4
         with:
           # Each artifact is named after the folder, ensuring uniqueness
-          name: ${{ matrix.output }}
+          name: ${{ matrix.base }}
           path: ${{ matrix.output }}
 
       - name: Copy schemas folder if available
