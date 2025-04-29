@@ -21,7 +21,7 @@ jobs:
       matrix: ${{ steps.build_matrix.outputs.matrix }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Build matrix from API docs
         id: build_matrix
         uses: ./.github/actions/find-openapi-spec
@@ -37,6 +37,8 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Generate Swagger UI using composite action
         uses: ./.github/actions/generate-swagger-ui
         with:
@@ -50,6 +52,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: generate-swagger-ui
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Deploy the site via composite action
         uses: ./.github/actions/deploy-gh-pages
         with:
