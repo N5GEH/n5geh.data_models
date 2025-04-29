@@ -129,8 +129,8 @@ jobs:
           for file in "$schema_dir"/*.json; do
             base=$(basename "$file" .json)
             echo "**${base}**"
-            echo "- [Schema](${site_url}/${deploy_dir}/schemas/${base}.json)"
-            echo "- [Swagger document](${site_url}/${deploy_dir}/swagger-ui/${base}/)"
+            echo "- [Schema](${site_url}/${schema_dir}/${base}.json)"
+            echo "- [Swagger document](${site_url}/${swagger_dir}/${base}/)"
             echo ""
           done
           echo "---"
