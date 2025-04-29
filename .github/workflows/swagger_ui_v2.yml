@@ -2,7 +2,8 @@ name: Generate Swagger UI for API specs of data models
 
 env:
   JSON_SCHEMA_PATH: example_building_automation/schemas
-  OUTPUT_ROOT: example_building_automation/deploy
+  OUTPUT_ROOT_PATH: example_building_automation/deploy
+  API_DOCS_PATH: example_building_automation/api_docs
 
 on:
   push:
@@ -25,8 +26,8 @@ jobs:
       - name: Find API spec files and build matrix
         id: build-matrix
         run: |
-          # Find all YAML files under any "api_docs" directory
-          specs=$(find . -type f -path "*/api_docs/*.yaml")
+          # Find all YAML files under "api_docs" directory
+          specs=$(find "$API_DOCS_PATH" -type f -name "*.yaml")
           echo "Found spec files:"
           echo "$specs"
 
@@ -109,19 +110,19 @@ jobs:
       - name: Download all UI artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ${{ env.OUTPUT_ROOT }}/swagger-ui
+          path: ${{ env.OUTPUT_ROOT_PATH }}/swagger-ui
 
       - name: Copy JSON data
         run: |
-          mkdir -p "$OUTPUT_ROOT/schemas"
-          cp -R $JSON_SCHEMA_PATH/*.json $OUTPUT_ROOT/schemas/
+          mkdir -p "$OUTPUT_ROOT_PATH/schemas"
+          cp -R $JSON_SCHEMA_PATH/*.json $OUTPUT_ROOT_PATH/schemas/
 
       - name: Generate resource list
         shell: bash
         run: |
           echo "Generating resource list dynamically..."
-          schema_dir="$OUTPUT_ROOT/schemas"
-          swagger_dir="$OUTPUT_ROOT/swagger-ui"
+          schema_dir="$OUTPUT_ROOT_PATH/schemas"
+          swagger_dir="$OUTPUT_ROOT_PATH/swagger-ui"
           repo_name=${GITHUB_REPOSITORY##*/}
           site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}"
           
@@ -140,5 +141,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ env.OUTPUT_ROOT }}
-          destination_dir: ${{ env.OUTPUT_ROOT }}
+          publish_dir: ${{ env.OUTPUT_ROOT_PATH }}
+          destination_dir: ${{ env.OUTPUT_ROOT_PATH }}
