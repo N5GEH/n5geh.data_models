@@ -122,3 +122,24 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ env.OUTPUT_ROOT }}
           destination_dir: ${{ env.OUTPUT_ROOT }}
+
+      - name: Generate resource list
+          run: |
+            echo "Generating resource list dynamically..."
+            schema_dir="$OUTPUT_ROOT/schemas"
+            swagger_dir="$OUTPUT_ROOT/swagger-ui"
+            repo_name=${GITHUB_REPOSITORY##*/}
+            site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}"
+            
+            echo "---"
+            for file in "$schema_dir"/*.json; do
+              base=$(basename "$file" .json)
+              resource_title=$(echo "$base" | sed 's/Fiware$//')
+              resource_title=$(echo "$resource_title" | sed 's/$[a-z]$$[A-Z]$/\1 \2/g')
+              echo "**${resource_title}**"
+              echo "- [Schema](${site_url}/${deploy_dir}/schemas/${base}.json)"
+              echo "- [Swagger document](${site_url}/${deploy_dir}/swagger-ui/${base}/)"
+              echo ""
+            done
+            echo "---"
+            echo "Done. See the resource list above."
