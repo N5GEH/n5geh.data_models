@@ -1,8 +1,8 @@
 name: Generate Swagger UI for API specs of data models
 
 env:
-  JSON_SCHEMA_PATH: ./example_building_automation/schemas
-  OUTPUT_ROOT: ./example_building_automation/deploy
+  JSON_SCHEMA_PATH: example_building_automation/schemas
+  OUTPUT_ROOT: example_building_automation/deploy
 
 on:
   push:
