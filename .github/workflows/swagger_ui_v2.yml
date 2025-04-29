@@ -124,6 +124,7 @@ jobs:
           destination_dir: ${{ env.OUTPUT_ROOT }}
 
       - name: Generate resource list
+          shell: bash
           run: |
             echo "Generating resource list dynamically..."
             schema_dir="$OUTPUT_ROOT/schemas"
@@ -134,9 +135,7 @@ jobs:
             echo "---"
             for file in "$schema_dir"/*.json; do
               base=$(basename "$file" .json)
-              resource_title=$(echo "$base" | sed 's/Fiware$//')
-              resource_title=$(echo "$resource_title" | sed 's/$[a-z]$$[A-Z]$/\1 \2/g')
-              echo "**${resource_title}**"
+              echo "**${base}**"
               echo "- [Schema](${site_url}/${deploy_dir}/schemas/${base}.json)"
               echo "- [Swagger document](${site_url}/${deploy_dir}/swagger-ui/${base}/)"
               echo ""
