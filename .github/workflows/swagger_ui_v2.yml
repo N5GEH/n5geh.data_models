@@ -120,7 +120,7 @@ jobs:
         with:
           # This downloads all artifacts (each will be placed in its own folder
           # under the "deploy" directory)
-          path: $OUTPUT_ROOT/swagger-ui
+          path: ${{ env.OUTPUT_ROOT }}/swagger-ui
 
       # (Optional) In case you want to include JSON data as well:
       - name: Copy JSON data
@@ -132,5 +132,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: $OUTPUT_ROOT
-          destination_dir: $OUTPUT_ROOT
+          publish_dir: ${{ env.OUTPUT_ROOT }}
+          destination_dir: ${{ env.OUTPUT_ROOT }}
