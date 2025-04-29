@@ -2,7 +2,7 @@ name: Generate Swagger UI for API specs of data models
 
 env:
   JSON_SCHEMA_PATH: ./example_building_automation/schemas
-  OUTPUT_ROOT: ./example_building_automation
+  OUTPUT_ROOT: ./example_building_automation/deploy
 
 on:
   push:
@@ -120,7 +120,7 @@ jobs:
         with:
           # This downloads all artifacts (each will be placed in its own folder
           # under the "deploy" directory)
-          path: $OUTPUT_ROOT
+          path: $OUTPUT_ROOT/swagger-ui
 
       # (Optional) In case you want to include JSON data as well:
       - name: Copy JSON data
