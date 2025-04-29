@@ -99,15 +99,6 @@ jobs:
             echo "No schemas folder found at $parent_dir/schemas"
           fi
 
-#      - name: Deploy to GitHub Pages
-#        uses: peaceiris/actions-gh-pages@v4
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          # Change the publish_dir to the folder you want served.
-#          # Here we deploy the directory containing the generated swagger-ui (and now also the schemas folder, if available).
-#          publish_dir: ${{ matrix.output }}
-#          destination_dir: ${{ matrix.output }}
-
   deploy-gh-pages:
     runs-on: ubuntu-latest
     needs: generate-swagger-ui
@@ -118,11 +109,8 @@ jobs:
       - name: Download all UI artifacts
         uses: actions/download-artifact@v4
         with:
-          # This downloads all artifacts (each will be placed in its own folder
-          # under the "deploy" directory)
           path: ${{ env.OUTPUT_ROOT }}/swagger-ui
 
-      # (Optional) In case you want to include JSON data as well:
       - name: Copy JSON data
         run: |
           mkdir -p "$OUTPUT_ROOT/schemas"
