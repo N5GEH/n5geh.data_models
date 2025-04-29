@@ -116,29 +116,29 @@ jobs:
           mkdir -p "$OUTPUT_ROOT/schemas"
           cp -R $JSON_SCHEMA_PATH/*.json $OUTPUT_ROOT/schemas/
 
+      - name: Generate resource list
+        shell: bash
+        run: |
+          echo "Generating resource list dynamically..."
+          schema_dir="$OUTPUT_ROOT/schemas"
+          swagger_dir="$OUTPUT_ROOT/swagger-ui"
+          repo_name=${GITHUB_REPOSITORY##*/}
+          site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}"
+          
+          echo "---"
+          for file in "$schema_dir"/*.json; do
+            base=$(basename "$file" .json)
+            echo "**${base}**"
+            echo "- [Schema](${site_url}/${deploy_dir}/schemas/${base}.json)"
+            echo "- [Swagger document](${site_url}/${deploy_dir}/swagger-ui/${base}/)"
+            echo ""
+          done
+          echo "---"
+          echo "Done. See the resource list above."
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ env.OUTPUT_ROOT }}
           destination_dir: ${{ env.OUTPUT_ROOT }}
-
-      - name: Generate resource list
-          shell: bash
-          run: |
-            echo "Generating resource list dynamically..."
-            schema_dir="$OUTPUT_ROOT/schemas"
-            swagger_dir="$OUTPUT_ROOT/swagger-ui"
-            repo_name=${GITHUB_REPOSITORY##*/}
-            site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}"
-            
-            echo "---"
-            for file in "$schema_dir"/*.json; do
-              base=$(basename "$file" .json)
-              echo "**${base}**"
-              echo "- [Schema](${site_url}/${deploy_dir}/schemas/${base}.json)"
-              echo "- [Swagger document](${site_url}/${deploy_dir}/swagger-ui/${base}/)"
-              echo ""
-            done
-            echo "---"
-            echo "Done. See the resource list above."
