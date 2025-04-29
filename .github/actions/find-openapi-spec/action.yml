@@ -1,0 +1,49 @@
+name: "Build API Spec Matrix"
+description: "Finds all YAML files under the provided API docs path and builds a JSON matrix."
+  
+inputs:
+  API_DOCS_PATH:
+    description: "Path to the API docs directory."
+    required: true
+    default: "api_docs"
+
+outputs:
+  matrix:
+    value: ${{ steps.build-matrix.outputs.matrix }}
+    description: "The generated JSON matrix."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Find API spec files and build matrix
+      id: build-matrix
+      shell: bash
+      env:
+        API_DOCS_PATH: ${{ inputs.API_DOCS_PATH }}
+      run: |
+        # Find all YAML files under API_DOCS_PATH
+        specs=$(find "$API_DOCS_PATH" -type f -name "*.yaml")
+        echo "Found spec files:"
+        echo "$specs"
+        
+        # Build a JSON matrix
+        matrix="[]"
+        for spec in $specs; do
+          # Remove the .yaml extension from the file name
+          base=$(basename "$spec" .yaml)
+          echo "Found base name: $base"
+          # Get the directory of that spec file
+          spec_dir=$(dirname "$spec")
+          # For each spec, the generated output will reside in: <spec_dir>/swagger-ui/<basename>
+          output_dir="${spec_dir}/swagger-ui/${base}"
+          newEntry="{\"spec\":\"${spec}\", \"output\":\"${output_dir}\", \"base\":\"${base}\"}"
+          if [ "$matrix" = "[]" ]; then
+            matrix="[$newEntry]"
+          else
+            matrix="${matrix%]}"
+            matrix+=",${newEntry}]"
+          fi
+        done
+        
+        echo "Matrix JSON: $matrix"
+        echo "matrix=$matrix" >> "$GITHUB_OUTPUT"

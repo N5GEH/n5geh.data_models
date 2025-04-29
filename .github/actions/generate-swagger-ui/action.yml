@@ -1,0 +1,43 @@
+name: "Generate Swagger UI"
+description: "Generate Swagger UI for one API spec file based on a given matrix entry."
+
+inputs:
+  spec:
+    description: "Path to the API spec file."
+    required: true
+  base:
+    description: "Base name for the API."
+    required: true
+  output:
+    description: "Output directory for the generated Swagger UI."
+    required: true
+  JSON_SCHEMA_PATH:
+    description: "Path to the JSON schema file (if needed by your swagger generator)."
+    required: true
+  GITHUB_TOKEN:
+    description: "Github token"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create output folder if not present
+      shell: bash
+      run: mkdir -p "${{ inputs.output }}"
+
+    - name: Generate Swagger UI for ${{ inputs.base }}
+      uses: Legion2/swagger-ui-action@v1
+      with:
+        spec-file: ${{ inputs.spec }}
+        output: ${{ inputs.output }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+
+    - name: Upload artifact for ${{ inputs.base }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.base }}
+        path: ${{ inputs.output }}
+

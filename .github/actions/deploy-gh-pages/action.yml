@@ -1,0 +1,57 @@
+name: "Deploy to GitHub Pages"
+description: "Downloads UI artifacts, copies JSON schema data, generates a resource list, and deploys the site to GitHub Pages."
+
+inputs:
+  OUTPUT_ROOT_PATH:
+    description: "The root output path where the swagger UI and schemas will be stored and deployed."
+    required: true
+  GITHUB_TOKEN:
+    description: "GitHub token used to deploy to GitHub Pages."
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download all UI artifacts
+      uses: actions/download-artifact@v4
+      with:
+        # Download artifacts into OUTPUT_ROOT_PATH/swagger-ui
+        path: ${{ inputs.OUTPUT_ROOT_PATH }}/swagger-ui
+
+    - name: Copy JSON data
+      shell: bash
+      run: |
+        # Create destination folder for JSON schemas.
+        mkdir -p "${{ inputs.OUTPUT_ROOT_PATH }}/schemas"
+        # Copy all JSON files from JSON_SCHEMA_PATH into the schemas folder.
+        cp -R "$JSON_SCHEMA_PATH"/*.json "${{ inputs.OUTPUT_ROOT_PATH }}/schemas/"
+
+    - name: Generate resource list
+      shell: bash
+      run: |
+        echo "Generating resource list dynamically..."
+        schema_dir="${{ inputs.OUTPUT_ROOT_PATH }}/schemas"
+        swagger_dir="${{ inputs.OUTPUT_ROOT_PATH }}/swagger-ui"
+        repo_name=${GITHUB_REPOSITORY##*/}
+        site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}"
+        
+        echo "---"
+        for file in "$schema_dir"/*.json; do
+          base=$(basename "$file" .json)
+          echo "**${base}**"
+          echo "- [Schema](${site_url}/${schema_dir}/${base}.json)"
+          echo "- [Swagger document](${site_url}/${swagger_dir}/${base}/)"
+          echo ""
+        done
+        echo "---"
+        echo "Done. See the resource list above."
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ inputs.GITHUB_TOKEN }}
+        publish_dir: ${{ inputs.OUTPUT_ROOT_PATH }}
+        destination_dir: ${{ inputs.OUTPUT_ROOT_PATH }}
