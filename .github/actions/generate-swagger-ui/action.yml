@@ -21,6 +21,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v4
     - name: Create output folder if not present
       shell: bash
       run: mkdir -p "${{ inputs.output }}"

@@ -15,6 +15,7 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v4
     - name: Find API spec files and build matrix
       id: build-matrix
       shell: bash
