@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/presence-sensor-fiware.json",
     "additionalProperties": true,
     "description": "Extends the PresenceSensor class to include Fiware-specific properties.",
     "properties": {

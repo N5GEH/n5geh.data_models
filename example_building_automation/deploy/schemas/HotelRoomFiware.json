@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/hotel-room-fiware.json",
     "additionalProperties": true,
     "description": "Extends the HotelRoom class to include Fiware-specific properties.",
     "properties": {

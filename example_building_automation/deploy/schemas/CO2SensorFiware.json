@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/co2-sensor-fiware.json",
     "additionalProperties": true,
     "description": "Extends the CO2Sensor class to include Fiware-specific properties.",
     "properties": {
