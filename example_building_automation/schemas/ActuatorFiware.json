@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/actuator-fiware.json",
     "additionalProperties": true,
     "description": "Base class for Fiware-compatible actuators.",
     "properties": {

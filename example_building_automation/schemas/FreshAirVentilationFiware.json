@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/fresh-air-ventilation-fiware.json",
     "additionalProperties": true,
     "description": "Extends the FreshAirVentilation class to include Fiware-specific properties.",
     "properties": {

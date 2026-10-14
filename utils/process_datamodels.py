@@ -176,7 +176,7 @@ def main():
             subprocess.check_call(["git", "add", "."])
             # Commit: Falls keine Änderungen vorhanden sind, wird commit fehlschlagen – dies ignorieren
             subprocess.call(["git", "commit", "-m",
-                             "Update generated schemas and OpenAPI docs [skip ci]"])
+                             "Update generated schemas and OpenAPI docs"])
 
             # Ermittle den aktuellen Branch aus der Umgebungsvariable GITHUB_REF
             branch_ref = os.environ.get("GITHUB_REF", "")

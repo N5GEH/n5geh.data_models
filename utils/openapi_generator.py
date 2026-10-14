@@ -87,6 +87,11 @@ def generate_openapi(model_name: str, json_schema: dict) -> dict:
     example_body = generate_example_body(model_name)
     get_response = generate_get_response(model_name, json_schema)
 
+    # The JSON schema carries a top-level `$id` used for standalone hosting.
+    # It is not meaningful inside an OpenAPI components section, so embed a
+    # copy without it to keep the API specification clean.
+    schema_for_component = {k: v for k, v in json_schema.items() if k != "$id"}
+
     openapi_spec = {
         "openapi": "3.0.1",
         "info": {
@@ -190,7 +195,7 @@ def generate_openapi(model_name: str, json_schema: dict) -> dict:
         },
         "components": {
             "schemas": {
-                model_name: json_schema
+                model_name: schema_for_component
             }
         }
     }

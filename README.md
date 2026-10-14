@@ -16,6 +16,9 @@ To use these utilities, the provided data models must follow some specific conve
 - **JSON Schema Generation:**  
   Uses Pydantic’s built-in method (`model_json_schema`) on each discovered model to create a corresponding JSON Schema.
   
+- **Stable `$id`:**  
+  Each generated schema receives a stable `$id` (a kebab-case identifier derived from the model title, e.g. `https://smartdatamodels.org/dataModel/temperature-sensor-fiware.json`). The base URI can be overridden via the `SCHEMA_BASE_URI` environment variable.
+
 - **Output:**  
   Writes each JSON Schema to a file (e.g., `TemperatureSensor.json`), making it easy to track changes over time or use these schemas in further processing.
 
@@ -37,10 +40,13 @@ To use these utilities, the provided data models must follow some specific conve
 
 ### GitHub Pages deployment
 - **JSON Schema hosting:**  
-    The generated JSON Schemas are hosted on GitHub Pages, for example [TemperatureSensorFiware.json](https://n5geh.github.io/n5geh.data_models/example_building_automation/schemas/TemperatureSensorFiware.json). This will make serialized data models accessible for everyone, accelerating the collaboration and enhancing the transparency of the project. 
+    The generated JSON Schemas are hosted on GitHub Pages, for example [TemperatureSensorFiware.json](https://n5geh.github.io/n5geh.data_models/example_building_automation/deploy/schemas/TemperatureSensorFiware.json). This will make serialized data models accessible for everyone, accelerating the collaboration and enhancing the transparency of the project. 
 
 - **Swagger UI generation:**  
-    The generated OpenAPI YAML files are further used to create Swagger UI documentation, which is visualization of the API documentation, for example [TemperatureSensorFiware](https://n5geh.github.io/n5geh.data_models/example_building_automation/api_docs/swagger-ui/TemperatureSensorFiware/). This provides a user-friendly interface for developers and partners to explore the use of corresponding data models in FIWARE APIs.
+    The generated OpenAPI YAML files are further used to create Swagger UI documentation, which is visualization of the API documentation, for example [TemperatureSensorFiware](https://n5geh.github.io/n5geh.data_models/example_building_automation/deploy/swagger-ui/TemperatureSensorFiware/). This provides a user-friendly interface for developers and partners to explore the use of corresponding data models in FIWARE APIs.
+
+- **Browsable index:**  
+    A set of navigation pages is generated automatically (`utils/generate_site.py`), so the published site can be explored without knowing the exact file paths. The root page lists all data model folders, each folder page links to its schemas and Swagger UI, and each listing shows the model descriptions taken from the generated schemas.
   
 ## Usage (preliminary version)
 

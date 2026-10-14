@@ -1,7 +1,8 @@
 name: Example n5geh data model workflow
 description: |
-  This workflow generates Swagger UI for API specs of data models and deploys them to GitHub Pages.
-  It uses preconfigured composite actions to setup and then generate the Swagger UI and ultimately deploy the site.
+  This workflow regenerates JSON schemas and OpenAPI specs from the data_models.py
+  single source of truth, generates Swagger UI, assembles a browsable static site
+  and deploys it to GitHub Pages.
 
 env:
   JSON_SCHEMA_PATH: example_building_automation/schemas
@@ -13,10 +14,42 @@ on:
     # Adjust branches as needed
     branches:
       - main
+    paths:
+      - '**/data_models.py'
+      - '**/schemas/**'
+      - '**/api_docs/**'
+      - '.github/workflows/example_data_models.yml'
+      - '.github/actions/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Regenerate schemas and OpenAPI docs
+        run: |
+          python utils/process_datamodels.py
+
   set-matrix:
     runs-on: ubuntu-latest
+    needs: generate
     concurrency:
       group: data-models-set-matrix
       cancel-in-progress: false
@@ -58,4 +91,5 @@ jobs:
         uses: N5GEH/n5geh.data_models/.github/actions/deploy-gh-pages@main
         with:
           OUTPUT_ROOT_PATH: ${{ env.OUTPUT_ROOT_PATH }}
+          SITE_ROOT: _site
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 name: "Build API Spec Matrix"
 description: "Finds all YAML files under the provided API docs path and builds a JSON matrix."
-  
+
 inputs:
   API_DOCS_PATH:
     description: "Path to the API docs directory."
@@ -16,6 +16,9 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v4
+      with:
+        # Check out the branch tip so freshly generated API docs are available.
+        ref: ${{ github.ref }}
     - name: Find API spec files and build matrix
       id: build-matrix
       shell: bash
@@ -26,7 +29,7 @@ runs:
         specs=$(find "$API_DOCS_PATH" -type f -name "*.yaml")
         echo "Found spec files:"
         echo "$specs"
-        
+
         # Build a JSON matrix
         matrix="[]"
         for spec in $specs; do
@@ -45,6 +48,6 @@ runs:
             matrix+=",${newEntry}]"
           fi
         done
-        
+
         echo "Matrix JSON: $matrix"
         echo "matrix=$matrix" >> "$GITHUB_OUTPUT"

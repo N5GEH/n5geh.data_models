@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/sensor-fiware.json",
     "additionalProperties": true,
     "description": "Base class for Fiware-compatible sensors.",
     "properties": {

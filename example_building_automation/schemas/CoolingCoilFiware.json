@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/cooling-coil-fiware.json",
     "additionalProperties": true,
     "description": "Extends the CoolingCoil class to include Fiware-specific properties.",
     "properties": {

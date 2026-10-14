@@ -1,5 +1,5 @@
 name: "Deploy to GitHub Pages"
-description: "Downloads UI artifacts, copies JSON schema data, generates a resource list, and deploys the site to GitHub Pages."
+description: "Downloads UI artifacts, copies JSON schema data, assembles the static site with navigation pages, and deploys it to GitHub Pages."
 
 inputs:
   OUTPUT_ROOT_PATH:
@@ -8,11 +8,18 @@ inputs:
   GITHUB_TOKEN:
     description: "GitHub token used to deploy to GitHub Pages."
     required: true
+  SITE_ROOT:
+    description: "Staging directory assembled and published to GitHub Pages."
+    required: false
+    default: "_site"
 
 runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v4
+      with:
+        # Check out the branch tip so freshly generated schemas are available.
+        ref: ${{ github.ref }}
     - name: Download all UI artifacts
       uses: actions/download-artifact@v4
       with:
@@ -27,29 +34,15 @@ runs:
         # Copy all JSON files from JSON_SCHEMA_PATH into the schemas folder.
         cp -R "$JSON_SCHEMA_PATH"/*.json "${{ inputs.OUTPUT_ROOT_PATH }}/schemas/"
 
-    - name: Generate resource list
+    - name: Generate site with navigation pages
       shell: bash
       run: |
-        echo "Generating resource list dynamically..."
-        schema_dir="${{ inputs.OUTPUT_ROOT_PATH }}/schemas"
-        swagger_dir="${{ inputs.OUTPUT_ROOT_PATH }}/swagger-ui"
-        repo_name=${GITHUB_REPOSITORY##*/}
-        site_url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo_name}"
-        
-        echo "---"
-        for file in "$schema_dir"/*.json; do
-          base=$(basename "$file" .json)
-          echo "**${base}**"
-          echo "- [Schema](${site_url}/${schema_dir}/${base}.json)"
-          echo "- [Swagger document](${site_url}/${swagger_dir}/${base}/)"
-          echo ""
-        done
-        echo "---"
-        echo "Done. See the resource list above."
+        python3 utils/generate_site.py "${{ inputs.OUTPUT_ROOT_PATH }}" \
+          --site-root "${{ inputs.SITE_ROOT }}" \
+          --repo-root "$GITHUB_WORKSPACE"
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ inputs.GITHUB_TOKEN }}
-        publish_dir: ${{ inputs.OUTPUT_ROOT_PATH }}
-        destination_dir: ${{ inputs.OUTPUT_ROOT_PATH }}
+        publish_dir: ${{ inputs.SITE_ROOT }}

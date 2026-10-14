@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/radiator-thermostat-fiware.json",
     "additionalProperties": true,
     "description": "Extends the RadiatorThermostat class to include Fiware-specific properties.",
     "properties": {

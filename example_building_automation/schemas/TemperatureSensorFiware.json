@@ -1,4 +1,5 @@
 {
+    "$id": "https://smartdatamodels.org/dataModel/temperature-sensor-fiware.json",
     "additionalProperties": true,
     "description": "Extends the TemperatureSensor class to include Fiware-specific properties.",
     "properties": {

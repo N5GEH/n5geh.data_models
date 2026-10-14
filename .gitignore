@@ -1,2 +1,6 @@
 /utils/api_docs/
 /utils/schemas/
+/_site/
+/example_building_automation/deploy/
+__pycache__/
+*.pyc
