@@ -5,6 +5,9 @@ inputs:
   OUTPUT_ROOT_PATH:
     description: "The root output path where the swagger UI and schemas will be stored and deployed."
     required: true
+  JSON_SCHEMA_PATH:
+    description: "Path to the folder containing the generated JSON schemas."
+    required: true
   GITHUB_TOKEN:
     description: "GitHub token used to deploy to GitHub Pages."
     required: true
@@ -32,12 +35,12 @@ runs:
         # Create destination folder for JSON schemas.
         mkdir -p "${{ inputs.OUTPUT_ROOT_PATH }}/schemas"
         # Copy all JSON files from JSON_SCHEMA_PATH into the schemas folder.
-        cp -R "$JSON_SCHEMA_PATH"/*.json "${{ inputs.OUTPUT_ROOT_PATH }}/schemas/"
+        cp -R "${{ inputs.JSON_SCHEMA_PATH }}"/*.json "${{ inputs.OUTPUT_ROOT_PATH }}/schemas/"
 
     - name: Generate site with navigation pages
       shell: bash
       run: |
-        python3 utils/generate_site.py "${{ inputs.OUTPUT_ROOT_PATH }}" \
+        python3 "${{ github.action_path }}/generate_site.py" "${{ inputs.OUTPUT_ROOT_PATH }}" \
           --site-root "${{ inputs.SITE_ROOT }}" \
           --repo-root "$GITHUB_WORKSPACE"
 

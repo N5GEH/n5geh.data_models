@@ -46,7 +46,7 @@ To use these utilities, the provided data models must follow some specific conve
     The generated OpenAPI YAML files are further used to create Swagger UI documentation, which is visualization of the API documentation, for example [TemperatureSensorFiware](https://n5geh.github.io/n5geh.data_models/example_building_automation/deploy/swagger-ui/TemperatureSensorFiware/). This provides a user-friendly interface for developers and partners to explore the use of corresponding data models in FIWARE APIs.
 
 - **Browsable index:**  
-    A set of navigation pages is generated automatically (`utils/generate_site.py`), so the published site can be explored without knowing the exact file paths. The root page lists all data model folders, each folder page links to its schemas and Swagger UI, and each listing shows the model descriptions taken from the generated schemas.
+    A set of navigation pages is generated automatically by the `deploy-gh-pages` action, so the published site can be explored without knowing the exact file paths. The root page lists all data model folders, each folder page links to its schemas and Swagger UI, and each listing shows the model descriptions taken from the generated schemas.
   
 ## Usage (preliminary version)
 

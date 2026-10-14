@@ -91,5 +91,6 @@ jobs:
         uses: N5GEH/n5geh.data_models/.github/actions/deploy-gh-pages@main
         with:
           OUTPUT_ROOT_PATH: ${{ env.OUTPUT_ROOT_PATH }}
+          JSON_SCHEMA_PATH: ${{ env.JSON_SCHEMA_PATH }}
           SITE_ROOT: _site
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
